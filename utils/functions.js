@@ -1,0 +1,54 @@
+const generateSlug = (item) => {
+  return item
+    .toLowerCase()
+    .replace(/ /g, '-')
+    .replace(/[^\w-]+/g, '');
+};
+
+const titleCase = (str) => {
+  return str.toLowerCase().replace(/(^|\s)\S/g, function (firstLetter) {
+    return firstLetter.toUpperCase();
+  });
+};
+
+const getMonths = (start_month, final_month) => {
+  let arr_months = [];
+  if (start_month != final_month) {
+    if (start_month >= final_month) {
+      for (let i = start_month; i <= 12; i++) {
+        arr_months.push(i);
+      }
+      for (let i = 1; i <= final_month; i++) {
+        arr_months.push(i);
+      }
+    } else {
+      for (let i = start_month; i <= final_month; i++) {
+        arr_months.push(i);
+      }
+    }
+  } else {
+    arr_months.push(start_month);
+  }
+
+  return arr_months;
+};
+
+const getRole = (role) => {
+  switch (role) {
+    case 'Administrador':
+      return ['Administrador'];
+    case 'Vendedor':
+      return ['Administrador', 'Vendedor'];
+    case 'Instuctor':
+      return ['Administrador', 'Instuctor'];
+    default:
+      return ['Administrador', 'Vendedor', 'Instuctor'];
+  }
+};
+
+module.exports = {
+  generateSlug,
+  titleCase,
+  getMonths,
+  getRole,
+};
