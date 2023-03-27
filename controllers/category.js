@@ -1,5 +1,5 @@
-const { response } = require("express");
-const Category = require("../models/category");
+const { response } = require('express');
+const Category = require('../models/category');
 
 const create_category = async (req, res = response) => {
   let data = req.body;
@@ -11,13 +11,13 @@ const create_category = async (req, res = response) => {
   }
 };
 
-const read_categories = async (req, res = response) => {
-  const { page = 1, limit = 10, search = "", status, order } = req.query;
-  const sort = order == "desc" ? 1 : -1;
+const search_categories = async (req, res = response) => {
+  const { page = 1, limit = 10, search = '', status, order } = req.query;
+  const sort = order == 'desc' ? 1 : -1;
 
   try {
     const query = {
-      title: { $regex: search, $options: "i" },
+      title: { $regex: search, $options: 'i' },
       status: { $ne: null },
     };
 
@@ -39,9 +39,9 @@ const read_categories = async (req, res = response) => {
   }
 };
 
-const read_all_categories = async (req, res = response) => {
+const read_categories = async (req, res = response) => {
   try {
-    let reg = await Category.find({ status: { $ne: null } });
+    let reg = await Category.find().sort({ created_at: -1 });
     return res.json({ data: reg });
   } catch (error) {
     return res.json({ msg: error.message });
@@ -49,7 +49,7 @@ const read_all_categories = async (req, res = response) => {
 };
 
 const read_category_by_id = async (req, res = response) => {
-  let id = req.params["id"];
+  let id = req.params['id'];
   try {
     let reg = await Category.findById(id);
     return res.json({ data: reg });
@@ -59,7 +59,7 @@ const read_category_by_id = async (req, res = response) => {
 };
 
 const update_category = async (req, res = response) => {
-  let id = req.params["id"];
+  let id = req.params['id'];
   let data = req.body;
 
   try {
@@ -71,9 +71,9 @@ const update_category = async (req, res = response) => {
 };
 
 const delete_category = async (req, res = response) => {
-  let id = req.params["id"];
+  let id = req.params['id'];
   try {
-    let reg = await Category.findByIdAndUpdate(id, { status: null }, { new: true });
+    let reg = await Category.findByIdAndDelete(id, { new: true });
     return res.json({ data: reg });
   } catch (error) {
     return res.json({ msg: error.message });
@@ -83,7 +83,7 @@ const delete_category = async (req, res = response) => {
 module.exports = {
   create_category,
   read_categories,
-  read_all_categories,
+  search_categories,
   read_category_by_id,
   update_category,
   delete_category,

@@ -18,7 +18,7 @@ const create_product = async (req, res = response) => {
   }
 };
 
-const read_products = async (req, res = response) => {
+const search_products = async (req, res = response) => {
   const { page = 1, limit = 10, search = '', status, order } = req.query;
   const sort = order == 'desc' ? 1 : -1;
 
@@ -47,9 +47,9 @@ const read_products = async (req, res = response) => {
   }
 };
 
-const read_all_products = async (req, res = response) => {
+const read_products = async (req, res = response) => {
   try {
-    let reg = await Product.find();
+    let reg = await Product.find().sort({ created_at: -1 }).populate('category');
     return res.json({ data: reg });
   } catch (error) {
     return res.json({ msg: error.message });
@@ -81,7 +81,6 @@ const update_product = async (req, res = response) => {
     }
 
     data.title = title;
-    data.slug = generateSlug(title);
 
     let reg = await Product.findByIdAndUpdate(id, data, { new: true });
     return res.json({ data: reg });
@@ -111,7 +110,7 @@ const delete_product = async (req, res = response) => {
 module.exports = {
   create_product,
   read_products,
-  read_all_products,
+  search_products,
   read_product_by_id,
   update_product,
   delete_product,

@@ -7,7 +7,7 @@ const CategorySchema = Schema(
     title:       { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true },
     image:       { type: Object, required: false, default: {} },
-    status:      { type: Boolean, required: true, default: false },
+    status:      { type: Boolean, required: false, default: false },
   },
   timestamps,
 );
