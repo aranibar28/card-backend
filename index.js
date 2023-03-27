@@ -20,6 +20,7 @@ app.use("/api/seed", require("./routes/seed"));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/products', require('./routes/products'));
+app.use("/api/uploads", require("./routes/uploads"));
 
 app.listen(process.env.PORT, () => {
   console.log('Servidor corriendo Puerto: ' + process.env.PORT);

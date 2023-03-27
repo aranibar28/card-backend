@@ -1,5 +1,5 @@
-const cloudinary = require("cloudinary").v2;
-const fileUpload = require("express-fileupload");
+const cloudinary = require('cloudinary').v2;
+const fileUpload = require('express-fileupload');
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -10,14 +10,14 @@ cloudinary.config({
 
 const tempUpload = fileUpload({
   useTempFiles: true,
-  tempFileDir: "uploads",
+  tempFileDir: 'uploads',
 });
 
 const uploadImage = async (filePath, folderName) => {
   return await cloudinary.uploader.upload(filePath, {
-    folder: "business/" + folderName,
-    format: "webp",
-    width: "600",
+    folder: 'restaurant/' + folderName,
+    format: 'webp',
+    width: '600',
   });
 };
 
