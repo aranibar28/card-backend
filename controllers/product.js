@@ -66,6 +66,16 @@ const read_product_by_id = async (req, res = response) => {
   }
 };
 
+const read_products_by_category = async (req, res = response) => {
+  let id = req.params['id'];
+  try {
+    let reg = await Product.find({ category: id });
+    return res.json({ data: reg });
+  } catch (error) {
+    return res.json({ msg: error.message });
+  }
+};
+
 const update_product = async (req, res = response) => {
   let id = req.params['id'];
   const { title, ...data } = req.body;
@@ -92,11 +102,6 @@ const update_product = async (req, res = response) => {
 const delete_product = async (req, res = response) => {
   let id = req.params['id'];
   try {
-    let product = await Product.findById(id);
-    if (product.stock != 0) {
-      return res.json({ msg: 'El stock debe estar en 0 para eliminarlo.' });
-    }
-
     let reg = await Product.findByIdAndDelete(id);
     if (reg.image.public_id) {
       await deleteImage(reg.image.public_id);
@@ -112,6 +117,7 @@ module.exports = {
   read_products,
   search_products,
   read_product_by_id,
+  read_products_by_category,
   update_product,
   delete_product,
 };
