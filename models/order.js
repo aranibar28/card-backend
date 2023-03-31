@@ -5,8 +5,8 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 const OrderSchema = Schema(
   {
     table:    { type: Schema.Types.ObjectId, required: true, ref: 'Table' },
-    subtotal: { type: Number, required: true, default: 0 },
-    status:   { type: String, required: true, default: 'Pendiente' },
+    product:  { type: Schema.Types.ObjectId, required: true, ref: 'Product' },
+    status:   { type: String, required: true, default: 'pending' },
     closed:   { type: Boolean, required: true, default: false },
   },
   timestamps,

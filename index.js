@@ -21,8 +21,9 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/products', require('./routes/products'));
 
-app.use('/api/orders', require('./routes/orders'));
 app.use('/api/tables', require('./routes/tables'));
+app.use('/api/orders', require('./routes/orders'));
+app.use('/api/payments', require('./routes/payments'));
 app.use('/api/uploads', require('./routes/uploads'));
 
 app.listen(process.env.PORT, () => {

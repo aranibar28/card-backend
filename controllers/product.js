@@ -69,7 +69,7 @@ const read_product_by_id = async (req, res = response) => {
 const read_products_by_category = async (req, res = response) => {
   let id = req.params['id'];
   try {
-    let reg = await Product.find({ category: id });
+    let reg = await Product.find({ category: id }).sort({ price: 1 });
     return res.json({ data: reg });
   } catch (error) {
     return res.json({ msg: error.message });
