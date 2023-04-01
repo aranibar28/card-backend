@@ -4,5 +4,7 @@ const ctrl = require('../controllers/payment');
 const router = Router();
 
 router.post('/create_payment', [validateJWT], ctrl.create_payment);
+router.get('/read_payment_by_table/:table', [validateJWT], ctrl.read_payment_by_table);
+router.put('/close_payment/:id', ctrl.close_payment);
 
 module.exports = router;

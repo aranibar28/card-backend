@@ -6,6 +6,7 @@ const OrderSchema = Schema(
   {
     table:    { type: Schema.Types.ObjectId, required: true, ref: 'Table' },
     product:  { type: Schema.Types.ObjectId, required: true, ref: 'Product' },
+    payment:  { type: Schema.Types.ObjectId, required: false, ref: 'Payment' },
     status:   { type: String, required: true, default: 'pending' },
     closed:   { type: Boolean, required: true, default: false },
   },
