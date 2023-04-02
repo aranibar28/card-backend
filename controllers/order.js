@@ -7,6 +7,10 @@ const Payment = require('../models/payment');
 const create_order = async (req, res = response) => {
   const { details, ...data } = req.body;
   try {
+    const orders = details.reduce((acc, ccr) => {
+      return acc + ccr.quantity;
+    }, 0);
+
     details.forEach(async (item) => {
       for (let i = 0; i < item.quantity; i++) {
         await Order.create({
@@ -18,7 +22,7 @@ const create_order = async (req, res = response) => {
 
     const reg = {
       table: data.table,
-      orders: details.length,
+      orders,
     };
 
     return res.json({ data: reg });
@@ -61,12 +65,37 @@ const read_orders = async (req, res = response) => {
 const read_orders_by_table = async (req, res = response) => {
   const table = req.params['table'];
   try {
-    let reg = await Order.find({ table, closed: false }).populate('product').sort({ created_at: -1, status: 'asc' });
-    return res.json({ data: reg });
+    const [orders, payment] = await Promise.all([
+      Order.find({ table, closed: false }).populate('product').sort({ created_at: -1 }),
+      Payment.findOne({ table, status: 'pending' }).lean(),
+    ]);
+
+    return res.json({ data: orders, payment });
   } catch (error) {
     return res.json({ msg: error.message });
   }
 };
+/*
+const read_orders_by_number = async (req, res = response) => {
+  const number = req.params['number'];
+  try {
+    const [table] = await Table.find({ number }).select('_id');
+
+    const data = await Order.aggregate([
+      { $match: { table: table._id, closed: false } },
+      { $sort: { created_at: -1, status: -1 } },
+      { $lookup: { from: 'products', localField: 'product', foreignField: '_id', as: 'product' } },
+      { $unwind: '$product' },
+      { $project: { _id: 0, product: 1, created_at: 1, status: 1 } },
+    ]);
+
+    const payment = await Payment.findOne({ table: table._id, status: 'pending' });
+
+    return res.json({ data, payment, table });
+  } catch (error) {
+    return res.json({ msg: error.message });
+  }
+}; */
 
 const read_orders_by_number = async (req, res = response) => {
   const number = req.params['number'];
@@ -75,7 +104,7 @@ const read_orders_by_number = async (req, res = response) => {
 
     const [orders, payment] = await Promise.all([
       Order.find({ table: table._id, closed: false }).populate('product').sort({ created_at: -1, status: -1 }),
-      Payment.findOne({ table, status: 'pending' }),
+      Payment.findOne({ table: table._id, status: 'pending' }),
     ]);
 
     return res.json({ data: orders, payment, table });
