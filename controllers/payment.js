@@ -25,16 +25,6 @@ const read_payments = async (req, res = response) => {
   }
 };
 
-const read_payment_by_table = async (req, res = response) => {
-  const table = req.params['table'];
-  try {
-    let reg = await Payment.find({ table, status: 'pending' });
-    return res.json({ data: reg });
-  } catch (error) {
-    return res.json({ msg: error.message });
-  }
-};
-
 const read_payment_details = async (req, res = response) => {
   const id = req.params['id'];
   try {
@@ -61,6 +51,5 @@ module.exports = {
   create_payment,
   read_payments,
   read_payment_details,
-  read_payment_by_table,
   close_payment,
 };

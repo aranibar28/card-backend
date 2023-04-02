@@ -16,7 +16,12 @@ const create_order = async (req, res = response) => {
       }
     });
 
-    return res.json({ data: details });
+    const reg = {
+      table: data.table,
+      orders: details.length,
+    };
+
+    return res.json({ data: reg });
   } catch (error) {
     return res.json({ msg: error.message });
   }
@@ -26,26 +31,26 @@ const read_orders = async (req, res = response) => {
   try {
     const [tables, orders, payments] = await Promise.all([
       Table.find().lean(),
-      Order.find({ closed: false }).populate('product'),
+      Order.find({ closed: false }).lean(),
       Payment.find({ status: 'pending' }).lean(),
     ]);
 
     for (let i = 0; i < tables.length; i++) {
-      let tableId = tables[i]._id;
-      let array_pending = orders.filter((order) => {
-        return order.table.toString() === tableId.toString() && order.status === 'pending';
-      });
-      let array_delivered = orders.filter((order) => {
-        return order.table.toString() === tableId.toString() && order.status === 'delivered';
+      let tableId = tables[i]._id.toString();
+
+      let array_pending = orders.filter((item) => {
+        return item.table.toString() === tableId && item.status === 'pending';
       });
 
-      let account = payments.filter((item) => {
-        return item.table.toString() === tableId.toString();
+      let array_delivered = orders.filter((item) => {
+        return item.table.toString() === tableId && item.status === 'delivered';
       });
 
-      tables[i].pending = array_pending;
-      tables[i].delivered = array_delivered;
-      tables[i].account = account.length >= 1 ? true : false;
+      let account = payments.some((item) => item.table.toString() === tableId);
+
+      tables[i].pending = array_pending.length;
+      tables[i].delivered = array_delivered.length;
+      tables[i].account = account;
     }
     return res.json({ data: tables });
   } catch (error) {
