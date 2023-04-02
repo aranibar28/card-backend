@@ -3,7 +3,20 @@ const mongoose = require('mongoose');
 const compression = require('compression');
 const express = require('express');
 const cors = require('cors');
+
+// sockets
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: '*' } });
+
+io.on('connection', (socket) => {
+  socket.on('send-order', (data) => {
+    io.emit('new-order', data);
+  });
+});
 
 app.use(cors());
 app.use(express.json());
@@ -26,6 +39,6 @@ app.use('/api/orders', require('./routes/orders'));
 app.use('/api/payments', require('./routes/payments'));
 app.use('/api/uploads', require('./routes/uploads'));
 
-app.listen(process.env.PORT, () => {
+httpServer.listen(process.env.PORT, () => {
   console.log('Servidor corriendo Puerto: ' + process.env.PORT);
 });

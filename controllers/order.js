@@ -24,7 +24,11 @@ const create_order = async (req, res = response) => {
 
 const read_orders = async (req, res = response) => {
   try {
-    const [tables, orders] = await Promise.all([Table.find().lean(), Order.find().populate('product')]);
+    const [tables, orders, payments] = await Promise.all([
+      Table.find().lean(),
+      Order.find({ closed: false }).populate('product'),
+      Payment.find({ status: 'pending' }).lean(),
+    ]);
 
     for (let i = 0; i < tables.length; i++) {
       let tableId = tables[i]._id;
@@ -35,8 +39,13 @@ const read_orders = async (req, res = response) => {
         return order.table.toString() === tableId.toString() && order.status === 'delivered';
       });
 
-      tables[i].pending = array_pending.length;
-      tables[i].delivered = array_delivered.length;
+      let account = payments.filter((item) => {
+        return item.table.toString() === tableId.toString();
+      });
+
+      tables[i].pending = array_pending;
+      tables[i].delivered = array_delivered;
+      tables[i].account = account.length >= 1 ? true : false;
     }
     return res.json({ data: tables });
   } catch (error) {

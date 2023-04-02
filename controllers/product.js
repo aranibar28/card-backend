@@ -19,24 +19,18 @@ const create_product = async (req, res = response) => {
 };
 
 const search_products = async (req, res = response) => {
-  const { page = 1, limit = 10, search = '', status, order } = req.query;
-  const sort = order == 'desc' ? 1 : -1;
+  const { page = 1, limit = 5, search = '' } = req.query;
 
   try {
     const query = {
       title: { $regex: search, $options: 'i' },
-      status: { $ne: null },
     };
-
-    if (status) {
-      query.status = status;
-    }
 
     const options = {
       page,
       limit,
-      sort: { created_at: sort },
       populate: 'category',
+      sort: { created_at: -1 },
     };
 
     let reg = await Product.paginate(query, options);
